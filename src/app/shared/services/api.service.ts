@@ -46,6 +46,16 @@ export class ApiService {
     } ).pipe(catchError(this.handleError));
   }
 
+
+
+  getLatestConversionRate():Observable<any>{
+    var myHeaders = new Headers();
+    myHeaders.append("apikey", "A6lWD3H4lohFZc0T144QcyVvgvZwlpgV");
+    return this.httpClient.get("https://api.apilayer.com/fixer/latest?symbols=USD,EUR,GBP,JPY,AUD,CAD,CHF,CNH,HKD,NZD&base=EUR",{
+      headers: {"apikey": "A6lWD3H4lohFZc0T144QcyVvgvZwlpgV"}
+    } ).pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.
