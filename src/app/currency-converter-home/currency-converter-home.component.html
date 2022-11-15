@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="header form-row ">
+        <img src="../../assets/bmp-logo.png" />
+        <div class="header-buttons">
+            <button> EURO-USD Details </button>
+            <button> EURO-GBP Details </button>
+        </div>
+    </div>
+    <h2>Currency Exchanger</h2>
+    <div class="header form-row" [formGroup]="currencyForm">
+
+        <div class="amount">
+            <label for="amount">Amount </label>
+            <input id="amount" type="text" formControlName="amount">
+
+        </div>
+<div *ngIf="currentValue">
+    
+Converted <br /> 
+<h3>{{currentValue}} {{currencyForm.value.to}}</h3>
+<br />
+1 {{currencyForm.value.from}}  = {{conversionRate}} {{currencyForm.value.to}} </div>
+       <div>
+      </div>
+      <div>   <div class="row">
+            <label for="from">From </label>
+             <select name="from" id="from">
+                <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}}</option>
+              </select>
+     </div>      
+    
+     <div class="row">
+        <label for="to">To </label>
+         <select name="to" id="to">
+            <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}}</option>
+          </select>
+ </div> 
+     <button type="submit" (click)="convertCurrency()">Convert</button>
+    </div>
+</div>
+    <div class="currencyGrid">
+        <div class="currencyBox">
+            1
+        </div>
+
+        <div class="currencyBox">
+            2
+        </div>
+
+        <div class="currencyBox">
+            3
+        </div>
+
+        <div class="currencyBox">
+            4
+        </div>
+
+        <div class="currencyBox">
+            5
+        </div>
+        <div class="currencyBox">
+            6
+        </div>
+        <div class="currencyBox">
+            7
+        </div>
+        <div class="currencyBox">
+            8
+        </div>
+        <div class="currencyBox">
+            9
+        </div>
+    </div>
+</div>
