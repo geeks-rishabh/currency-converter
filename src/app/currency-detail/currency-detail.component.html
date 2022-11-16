@@ -1,1 +1,54 @@
-<p>currency-detail works!</p>
+<div class="container">
+    <div class="header form-row ">
+        <img src="../../assets/bmp-logo.png" />
+        <div>
+            <button class="nav-btn"> EURO-USD Details </button>
+            <button class="nav-btn"> EURO-GBP Details </button>
+        </div>
+    </div>
+    <div class="header form-row ">
+        <h2><strong>EUR - Europian Union Euro</strong></h2>
+        <div>
+            <button class="nav-btn" routerLink="/home"> Back to Home </button>
+        </div>
+    </div>
+    
+    <div class="header form-row" [formGroup]="currencyForm">
+
+        <div class="amount" style="width: 40%;">
+            <div class="div-select input"> <label for="amount">Amount </label>
+                <input id="amount" type="text" formControlName="amount">
+            </div>
+            <div *ngIf="currentValue">
+                <div class="conversionBox">
+                    1 {{currencyForm.value.from}} = {{conversionRate}} {{currencyForm.value.to}} </div>
+            </div>
+        </div>
+     
+     <div style="width: 60%; margin: 10px 5px;">       <div class="div-select">
+                <label for="from">From </label>
+                <select class="select" name="from" id="from">
+                    <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}} - {{item?.name}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="div-select">
+                <label for="to">To </label>
+                <select class="select" name="to" id="to">
+                    <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}} - {{item?.name}}
+                    </option>
+                </select>
+            </div>
+            <button class="btn convert" type="submit" (click)="convertCurrency()">Convert</button>
+
+            <div  class="flex">   <div class="conversionBox">
+                1 {{currencyForm.value.from}} = {{conversionRate}} {{currencyForm.value.to}} </div>
+       </div>
+    </div></div>
+    <div class="currencyGrid">
+        <!-- <div class="currencyBox" *ngFor="let rate of latestRates">
+            {{currencyForm.value.amount * rate.rate}}
+        </div> -->
+    </div>
+</div>
