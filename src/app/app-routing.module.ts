@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CurrencyConverterHomeComponent } from './currency-converter-home/currency-converter-home.component';
 import { CurrencyDetailComponent } from './currency-detail/currency-detail.component';
 
-const routes: Routes = [{ path: 'home', component: CurrencyConverterHomeComponent }, { path: 'details', component: CurrencyDetailComponent }];
+const routes: Routes = [{ path: '', component: CurrencyConverterHomeComponent }, { path: 'details/:from/:to/:amount', component: CurrencyDetailComponent }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
