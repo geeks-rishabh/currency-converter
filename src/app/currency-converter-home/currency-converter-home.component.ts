@@ -12,25 +12,31 @@ export class CurrencyConverterHomeComponent implements OnInit {
   currencyForm!: FormGroup;
   currentValue: string = "";
   conversionRate = "";
-  currencies: any[] = [{ name: 'United States Dollar', symbol: 'USD' }, { name: 'Great Britain Pound', symbol: 'GBP' }, { name: 'Euro', symbol: 'EUR' }];
+  currencies: any[] =[];
   latestRates: any[] = [];
+  errorTxt:string ='';
   constructor(private fb: FormBuilder, private apiService: ApiService) { }
 
   ngOnInit(): void {
     this.currencyForm = new FormGroup({
-      amount: new FormControl('1', [Validators.required]),
+      amount: new FormControl(1, [Validators.required,Validators.pattern(/^-?(0|[1-9]\d*)?$/)]),
       from: new FormControl('EUR', [Validators.required]),
       to: new FormControl('USD', [Validators.required]),
     });
 
     this.currencyForm.valueChanges
-      .subscribe((value:any) => {
-        console.log(value);
+      .subscribe((params:any) => {
+        console.log(params);
+        this.currentValue ='';
+        this.errorTxt = '';
+        if(params.to===params.from){
+          this.errorTxt = "From and To currency should not be same";
+        }
       });
     this.fetchCurrencyList();
-    this.convertCurrency();
-  }
+    }
   convertCurrency() {
+    this.currentValue = '';
     console.log(this.currencyForm.value);
     if (!this.currencyForm.valid) {
       return;
@@ -39,35 +45,18 @@ export class CurrencyConverterHomeComponent implements OnInit {
     if (this.currencyForm.value.to === this.currencyForm.value.from) {
       return;
     }
-    const conversionResponse = {
-      "date": "2018-02-22",
-      "historical": "",
-      "info": {
-        "rate": 148.972231,
-        "timestamp": 1519328414
-      },
-      "query": {
-        "amount": 25,
-        "from": "GBP",
-        "to": "JPY"
-      },
-      "result": 3724.305775,
-      "success": true
-    }
-    this.currentValue = "" + conversionResponse.result;
-    this.conversionRate = "" + conversionResponse.info.rate;
-    this.fetchLatestConversionRates();
-       /* this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: any) => {
-         this.currentValue = "" + conversionResponse.result;
-    this.conversionRate = "" + conversionResponse.info.rate;
-   });
-  */}
+    this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: any) => {
+      this.currentValue = "" + res.result;
+      this.conversionRate = "" + res.info.rate;
+      this.fetchLatestConversionRates();
+    });
+  }
 
   fetchCurrencyList() {
     let symbols: string[] = [];
     let names: string[] = [];
+    this.currencies = [];
     this.apiService.getCurrencyList().subscribe((res: any) => {
-      // this.currencies = res.symbols;
       this.fetchLatestConversionRates();
       names = Object.values(res.symbols);
       symbols = Object.keys(res.symbols);
@@ -76,57 +65,26 @@ export class CurrencyConverterHomeComponent implements OnInit {
       for (let i = 0; i < names.length; i++) {
         this.currencies.push({ name: names[i], symbol: symbols[i] });
       }
+
+      this.currencyForm.patchValue({to:'EUR', from:'USD'});
     });
   }
   fetchLatestConversionRates() {
-    const res = {
-      "base": "EUR",
-      "date": "2022-04-14",
-      "rates": {
-        "AUD": 1.533492,
-        "CAD": 1.376816,
-        "CHF": 0.978849,
-        "EUR": 1,
-        "GBP": 0.874101,
-        "HKD": 8.120701,
-        "JPY": 145.089016,
-        "NZD": 1.684334,
-        "USD": 1.037829
-      },
-      "success": true,
-      "timestamp": 1519296206
-    }
-    let symbols: string[] = [];
-    let rates: number[] = [];
-    symbols = Object.keys(res.rates);
-    rates = Object.values(res.rates);
+    this.apiService.getLatestConversionRate("USD,EUR,GBP,JPY,AUD,CAD,CHF,CNH,HKD,NZD,AED", this.currencyForm.value.from).subscribe((res: any) => {
+      console.log(res);
+      let symbols: string[] = [];
+      let rates: number[] = [];
+      symbols = Object.keys(res.rates);
+      rates = Object.values(res.rates);
 
-    for (let i = 0; i < symbols.length; i++) {
+      for (let i = 0; i < symbols.length; i++) {
 
-      if ((this.currencyForm.value.to === symbols[i]) || (this.currencyForm.value.from === symbols[i])) {
+        if ((this.currencyForm.value.to === symbols[i]) || (this.currencyForm.value.from === symbols[i])) {
 
-      } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
-    }
-    /* this.apiService.getLatestConversionRate().subscribe((res: any) => {
-       console.log(res);
-    let symbols: string[] = [];
-    let rates: number[] = [];
-    symbols = Object.keys(res.rates);
-    rates = Object.values(res.rates);
-
-    for (let i = 0; i < symbols.length; i++) {
-
-      if ((this.currencyForm.value.to ===symbols[i]) || (this.currencyForm.value.from ===symbols[i])) {
-
-      } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
-    }
-
-   });
-*/
+        } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
+      }
+this.latestRates.length = 9;
+    });
   }
 
-
-  f() {
-    return this.currencyForm.value;
-  }
 }

@@ -53,6 +53,7 @@
 .currencyBox{
     height: 125px;
     border: 2px solid rgb(0, 113, 235);
+
     line-height: 125px;
     text-align: center;
 }
@@ -136,3 +137,7 @@
     font-size: 1.2em;
     place-self: center;
 }
+
+button:disabled{
+    opacity: 0.3;
+  }

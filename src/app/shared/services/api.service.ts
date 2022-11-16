@@ -17,11 +17,11 @@ export class ApiService {
     }).pipe(catchError(this.handleError));
   }
 
-  getHistoricalData(): Observable<any> {
+  getHistoricalData(currencyFrom:string,currencyTo:string): Observable<any> {
     let start_date = new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0];
     let today = new Date().toISOString().split('T')[0];
     console.log();
-    return this.httpClient.get(`https://api.apilayer.com/fixer/fluctuation?start_date=${start_date}&end_date=${today}`, {
+    return this.httpClient.get(`https://api.apilayer.com/fixer/timeseries?start_date=${start_date}&end_date=${today}&base=${currencyFrom}&symbols=${currencyTo}`, {
       headers: { "apikey": environment.fixerKey }
     }).pipe(catchError(this.handleError));
   }
@@ -34,9 +34,9 @@ export class ApiService {
     }).pipe(catchError(this.handleError));
   }
 
-  getLatestConversionRate(): Observable<any> {
+  getLatestConversionRate(queryParams:string,base:string): Observable<any> {
 
-    return this.httpClient.get("https://api.apilayer.com/fixer/latest?symbols=USD,EUR,GBP,JPY,AUD,CAD,CHF,CNH,HKD,NZD&base=EUR", {
+    return this.httpClient.get(`https://api.apilayer.com/fixer/latest?symbols=${queryParams}&base=${base}`, {
       headers: { "apikey": environment.fixerKey }
     }).pipe(catchError(this.handleError));
   }

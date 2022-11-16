@@ -4,7 +4,7 @@
 
         <div class="amount" style="width: 30%;">
             <div class="div-select input"> <label for="amount">Amount </label>
-                <input id="amount" type="text" formControlName="amount">
+                <input id="amount" type="number" formControlName="amount">
             </div>
             <div *ngIf="currentValue">
                 <div class="conversionBox">
@@ -16,31 +16,32 @@
             <div style="display:flex;justify-content: space-between;">
                 <div class="div-select">
                     <label for="from">From </label>
-                    <select class="select" name="from" id="from">
-                        <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}} - {{item?.name}}
+                    <select class="select" formControlName="from" id="from">
+                        <option *ngFor="let item of currencies" [value]="item.symbol" [selected]="item.symbol==='EUR'">{{item?.symbol}} - {{item?.name}}
                         </option>
                     </select>
                 </div>
 
                 <div class="div-select">
                     <label for="to">To </label>
-                    <select class="select" name="to" id="to">
-                        <option *ngFor="let item of currencies" value="item.symbol">{{item?.symbol}} - {{item?.name}}
+                    <select class="select" formControlName="to" id="to" >
+                        <option *ngFor="let item of currencies" value="{{item.symbol}}" [selected]="item.symbol==='USD'">{{item?.symbol}} - {{item?.name}}
                         </option>
                     </select>
                 </div>
             </div>
-            <button class="btn convert" type="submit" (click)="convertCurrency()">Convert</button>
-            <div class="flex">
+            <span *ngIf="errorTxt" style="color: red;">{{errorTxt}} </span>
+            <button class="btn convert" type="submit" (click)="convertCurrency()" [disabled]="!currencyForm.valid || errorTxt">Convert</button>
+            <div *ngIf="currentValue" class="flex">
                 <div class="conversionBox">
                     {{currentValue}} {{currencyForm.value.to}} </div>
                 <button class="btn details" type="submit" routerLink="/details/{{currencyForm.value.from}}/{{currencyForm.value.to}}/{{currencyForm.value.amount}}">More Details</button>
             </div>
         </div>
     </div>
-    <div class="currencyGrid">
+    <div *ngIf="currentValue" class="currencyGrid">
         <div class="currencyBox" *ngFor="let rate of latestRates">
-         <span >   {{currencyForm.value.amount * rate.rate}} {{rate.symbol}}  </span>
+         <span routerLink="/details/{{currencyForm.value.from}}/{{rate.symbol}}/{{currencyForm.value.amount}}" >   {{currencyForm.value.amount * rate.rate}} {{rate.symbol}}  </span>
         </div>
     </div>
 </div>
