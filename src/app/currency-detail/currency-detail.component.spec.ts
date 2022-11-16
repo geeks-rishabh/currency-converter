@@ -27,4 +27,5 @@ describe('CurrencyDetailComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });
