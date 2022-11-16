@@ -33,6 +33,8 @@ export class CurrencyConverterHomeComponent {
         if ((params.to === symbols[i]) || (params.from === symbols[i])) {
         } else {  this.latestRates.push({ rate: rates[i], symbol: symbols[i] });  }
       }
+
+      this.currencyForm.patchValue({to:'EUR', from:'USD'});
     });
   }
 
