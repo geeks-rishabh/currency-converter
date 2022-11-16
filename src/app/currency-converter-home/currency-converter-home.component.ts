@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { pairwise } from 'rxjs';
 import { ApiService } from '../shared/services/api.service';
 
 @Component({
@@ -22,12 +23,20 @@ export class CurrencyConverterHomeComponent implements OnInit {
       to: new FormControl('USD', [Validators.required]),
     });
 
-    // this.fetchCurrencyList();
+    this.currencyForm.valueChanges
+      .subscribe((value:any) => {
+        console.log(value);
+      });
+    this.fetchCurrencyList();
     this.convertCurrency();
   }
   convertCurrency() {
     console.log(this.currencyForm.value);
     if (!this.currencyForm.valid) {
+      return;
+    }
+
+    if (this.currencyForm.value.to === this.currencyForm.value.from) {
       return;
     }
     const conversionResponse = {
@@ -47,10 +56,12 @@ export class CurrencyConverterHomeComponent implements OnInit {
     }
     this.currentValue = "" + conversionResponse.result;
     this.conversionRate = "" + conversionResponse.info.rate;
-    this.fetchLatestConversionRates(); 
-       // this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: any) => {
-    // });
-  }
+    this.fetchLatestConversionRates();
+       /* this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: any) => {
+         this.currentValue = "" + conversionResponse.result;
+    this.conversionRate = "" + conversionResponse.info.rate;
+   });
+  */}
 
   fetchCurrencyList() {
     let symbols: string[] = [];
@@ -69,20 +80,18 @@ export class CurrencyConverterHomeComponent implements OnInit {
   }
   fetchLatestConversionRates() {
     const res = {
-      "base": "USD",
+      "base": "EUR",
       "date": "2022-04-14",
       "rates": {
-        "EUR": 0.813399,
-        "GBP": 0.72007,
-        "JPY": 107.346001,
-        "NZR": 10.346001,
-        "AUD": 78.3001,
-        "CAD": 21.30,
-        "HKD": 2.30,
-        "CHF": 4.30,
-        "CNH": 24.30,
-        "USD": 80.30,
-        "INR": 0.30,
+        "AUD": 1.533492,
+        "CAD": 1.376816,
+        "CHF": 0.978849,
+        "EUR": 1,
+        "GBP": 0.874101,
+        "HKD": 8.120701,
+        "JPY": 145.089016,
+        "NZD": 1.684334,
+        "USD": 1.037829
       },
       "success": true,
       "timestamp": 1519296206
@@ -92,7 +101,18 @@ export class CurrencyConverterHomeComponent implements OnInit {
     symbols = Object.keys(res.rates);
     rates = Object.values(res.rates);
 
-    // this.currencies = [];
+    for (let i = 0; i < symbols.length; i++) {
+
+      if ((this.currencyForm.value.to === symbols[i]) || (this.currencyForm.value.from === symbols[i])) {
+
+      } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
+    }
+    /* this.apiService.getLatestConversionRate().subscribe((res: any) => {
+       console.log(res);
+    let symbols: string[] = [];
+    let rates: number[] = [];
+    symbols = Object.keys(res.rates);
+    rates = Object.values(res.rates);
 
     for (let i = 0; i < symbols.length; i++) {
 
@@ -101,13 +121,8 @@ export class CurrencyConverterHomeComponent implements OnInit {
       } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
     }
 
-    // this.apiService.getLatestConversionRate().subscribe((res: any) => {
-
-
-    //   console.log(res);
-
-    // });
-
+   });
+*/
   }
 
 

@@ -7,18 +7,27 @@ import { CurrencyDetailComponent } from './currency-detail/currency-detail.compo
 import { CurrencyConverterHomeComponent } from './currency-converter-home/currency-converter-home.component';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgChartsModule } from 'ng2-charts';
+import { HeaderComponent } from './header/header.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 @NgModule({
   declarations: [
     AppComponent,
     CurrencyDetailComponent,
-    CurrencyConverterHomeComponent
+    CurrencyConverterHomeComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgChartsModule,
+    BrowserAnimationsModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
