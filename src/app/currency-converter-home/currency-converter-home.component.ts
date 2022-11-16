@@ -23,6 +23,7 @@ export class CurrencyConverterHomeComponent implements OnInit {
     });
 
     // this.fetchCurrencyList();
+    this.convertCurrency();
   }
   convertCurrency() {
     console.log(this.currencyForm.value);
@@ -73,7 +74,15 @@ export class CurrencyConverterHomeComponent implements OnInit {
       "rates": {
         "EUR": 0.813399,
         "GBP": 0.72007,
-        "JPY": 107.346001
+        "JPY": 107.346001,
+        "NZR": 10.346001,
+        "AUD": 78.3001,
+        "CAD": 21.30,
+        "HKD": 2.30,
+        "CHF": 4.30,
+        "CNH": 24.30,
+        "USD": 80.30,
+        "INR": 0.30,
       },
       "success": true,
       "timestamp": 1519296206

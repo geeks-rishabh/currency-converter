@@ -1,1 +1,86 @@
 /* You can add global styles to this file, and also import other style files */
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction:column ;
+}
+.header {
+    display: flex;
+    // width: 100%;
+    justify-content: space-between;
+    padding: 10px;
+    gap:10px
+}
+.form-row {
+    display: flex;
+    flex-direction: row;
+    border: 2px solid red;
+}
+.currencyGrid{
+    justify-content: center;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1;
+    grid-template-columns: repeat(3,1fr);
+    row-gap: 10px;
+    height: 240px;
+}
+.currencyBox{
+    height: 125px;
+    border: 2px solid red;
+}
+
+.grid{
+    display: grid;
+}
+
+.flex{
+    display: flex;
+}
+.conversionBox{
+    border: 2px solid red;
+    width:50%;
+}
+.amount {
+    display: grid;
+    // width: 100%;
+    row-gap: 40px;
+    flex-direction: column;
+    // border: 5px solid blue;
+}
+
+.nav-btn{
+    padding: 10px 20px;
+    font-size: 1.6rem;
+    color: rgb(255, 255, 255);
+    background: rgb(0, 113, 235);
+    border: 2px solid rgb(0, 113, 235);
+    border-radius: 8px;
+    margin: 5px;
+}
+.btn{
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    color: rgb(255, 255, 255);
+    background: rgb(0, 113, 235);
+    border: 2px solid rgb(0, 113, 235);
+    border-radius: 8px;
+    margin: 5px;
+}
+.convert {
+    width: 100%;
+}
+.details {
+    width: 50%;
+}
+.div-select{
+    
+    display: flex;
+    flex-direction: column;
+}
+.select{
+    padding: 14px;
+}
+.input {
+    row-gap: 5px;
+}
