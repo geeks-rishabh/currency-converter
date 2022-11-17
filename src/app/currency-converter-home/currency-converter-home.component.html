@@ -8,7 +8,7 @@
             </div>
             <div *ngIf="currentValue">
                 <div class="conversionBox">
-                    1 {{currencyForm.value.from}} = {{conversionRate}} {{currencyForm.value.to}} </div>
+                     {{ 1 | currency:currencyForm.value.from }} = {{conversionRate | currency:currencyForm.value.to}} </div>
             </div>
         </div>
 
@@ -22,6 +22,7 @@
                     </select>
                 </div>
 
+                <button class="convertBtn" (click)="swap()" > <img class="convertIco" src="../../assets/swap.svg"/> </button>
                 <div class="div-select">
                     <label for="to">To </label>
                     <select class="select" formControlName="to" id="to" >
@@ -34,14 +35,16 @@
             <button class="btn convert" type="submit" (click)="convertCurrency()" [disabled]="!currencyForm.valid || errorTxt">Convert</button>
             <div *ngIf="currentValue" class="flex">
                 <div class="conversionBox">
-                    {{currentValue}} {{currencyForm.value.to}} </div>
+                 <span>   Converted Value <br /> <strong>    {{currentValue | currency:currencyForm.value.to}}</strong> </span> </div>
                 <button class="btn details" type="submit" routerLink="/details/{{currencyForm.value.from}}/{{currencyForm.value.to}}/{{currencyForm.value.amount}}">More Details</button>
             </div>
         </div>
     </div>
+    <ng-container *ngIf="home" >
     <div *ngIf="currentValue" class="currencyGrid">
         <div class="currencyBox" *ngFor="let rate of latestRates">
-         <span routerLink="/details/{{currencyForm.value.from}}/{{rate.symbol}}/{{currencyForm.value.amount}}" >   {{currencyForm.value.amount * rate.rate}} {{rate.symbol}}  </span>
+         <span routerLink="/details/{{currencyForm.value.from}}/{{rate.symbol}}/{{currencyForm.value.amount}}" >   {{(currencyForm.value.amount * rate.rate)  | currency:rate.symbol}}   </span>
         </div>
     </div>
+    </ng-container>
 </div>
