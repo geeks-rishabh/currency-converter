@@ -1,16 +1,16 @@
 <div class="main-content">
     <div class="content">
-        <h2><strong>{{to}} </strong></h2>
+        <h2><strong><strong>{{currencyObj.symbol}}</strong> - {{currencyObj.name}}  </strong></h2>
         <div>
             <button class="nav-btn" routerLink="/"> Back to Home </button>
         </div>
     </div>
 
-    <app-currency-converter [isHome]="false" [amount]="amount" [currencyFrom]="from" [currencyTo]="to" (update)="fetchHistoricData()"></app-currency-converter>
+    <app-currency-converter [isHome]="false" [amount]="amount" [currencyFrom]="from" [currencyTo]="to" (update)="fetchHistoricData()" (currencyObj)="updateCurrency($event)"></app-currency-converter>
 
     <div>
         <div style="display: block;" *ngIf="chart">
-            <canvas baseChart class="chart" [type]="'line'" [data]="lineChartData" [options]="lineChartOptions"
+            <canvas baseChart class="chart" [type]="'bar'" [data]="lineChartData" [options]="lineChartOptions"
                 [legend]="lineChartLegend">
             </canvas>
         </div>
