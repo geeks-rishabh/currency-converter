@@ -137,3 +137,12 @@ export interface HistoricalDataResponse {
   "success": boolean,
   "timeseries": boolean
 }
+
+export interface HistoricalDataResponse {
+  "base": string,
+  "end_date": string,
+  "rates": Object,
+  "start_date": string,
+  "success": boolean,
+  "timeseries": boolean
+}
