@@ -34,7 +34,7 @@ export class CurrencyConverterHomeComponent {
         } else {  this.latestRates.push({ rate: rates[i], symbol: symbols[i] });  }
       }
 
-      this.currencyForm.patchValue({to:'EUR', from:'USD'});
+      this.currencyForm.patchValue({ to: 'EUR', from: 'USD' });
     });
   }
 
