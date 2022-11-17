@@ -7,38 +7,31 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ApiService {
-
+   headers  = {
+    headers: { "apikey": environment.fixerKey }
+  };  
   constructor(private httpClient: HttpClient) { }
-
   getExchangeRates(params: any): Observable<any> {
 
-    return this.httpClient.get(`https://api.apilayer.com/fixer/convert?to=${params.to}&from=${params.from}&amount=${params.amount}`, {
-      headers: { "apikey": environment.fixerKey }
-    }).pipe(catchError(this.handleError));
+    return this.httpClient.get(`convert?to=${params.to}&from=${params.from}&amount=${params.amount}`,this.headers).pipe(catchError(this.handleError));
   }
 
   getHistoricalData(currencyFrom:string,currencyTo:string): Observable<any> {
     let start_date = new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0];
     let today = new Date().toISOString().split('T')[0];
-    console.log();
-    return this.httpClient.get(`https://api.apilayer.com/fixer/timeseries?start_date=${start_date}&end_date=${today}&base=${currencyFrom}&symbols=${currencyTo}`, {
-      headers: { "apikey": environment.fixerKey }
-    }).pipe(catchError(this.handleError));
+    
+    return this.httpClient.get(`${environment.apiURL}timeseries?start_date=${start_date}&end_date=${today}&base=${currencyFrom}&symbols=${currencyTo}`, this.headers).pipe(catchError(this.handleError));
   }
 
 
   getCurrencyList(): Observable<any> {
 
-    return this.httpClient.get("https://api.apilayer.com/fixer/symbols", {
-      headers: { "apikey": environment.fixerKey }
-    }).pipe(catchError(this.handleError));
+    return this.httpClient.get(`${environment.apiURL}symbols`, this.headers).pipe(catchError(this.handleError));
   }
 
   getLatestConversionRate(queryParams:string,base:string): Observable<any> {
 
-    return this.httpClient.get(`https://api.apilayer.com/fixer/latest?symbols=${queryParams}&base=${base}`, {
-      headers: { "apikey": environment.fixerKey }
-    }).pipe(catchError(this.handleError));
+    return this.httpClient.get(`${environment.apiURL}latest?symbols=${queryParams}&base=${base}`,this.headers).pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

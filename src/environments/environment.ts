@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  fixerKey: 'zYFVmGiHvpxibx6OttfI3bNFykSTxzyb'
+  apiURL:'https://api.apilayer.com/fixer/',
+  fixerKey: 'zYFVmGiHvpxibx6OttfI3bNFykSTxzyb--'
 };
 
 /*
