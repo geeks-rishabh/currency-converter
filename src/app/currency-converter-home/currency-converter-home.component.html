@@ -1,50 +1,14 @@
 <div class="main-content">
     <h2><strong>Currency Exchanger</strong></h2>
-    <div class="content form-row" [formGroup]="currencyForm">
+    <app-currency-converter [isHome]="true" [amount]="1" [currencyFrom]="'Euro'" [currencyTo]="'USD'"
+        (update)="fetchLatestConversionRates($event)"></app-currency-converter>
 
-        <div class="amount" style="width: 30%;">
-            <div class="div-select input"> <label for="amount">Amount </label>
-                <input id="amount" type="number" formControlName="amount">
-            </div>
-            <div *ngIf="currentValue">
-                <div class="conversionBox">
-                     {{ 1 | currency:currencyForm.value.from }} = {{conversionRate | currency:currencyForm.value.to}} </div>
-            </div>
-        </div>
 
-        <div style="width: 60%; margin: 10px 5px;">
-            <div style="display:flex;justify-content: space-between;">
-                <div class="div-select">
-                    <label for="from">From </label>
-                    <select class="select" formControlName="from" id="from">
-                        <option *ngFor="let item of currencies" [value]="item.symbol" [selected]="item.symbol==='EUR'">{{item?.symbol}} - {{item?.name}}
-                        </option>
-                    </select>
-                </div>
-
-                <button class="convertBtn" (click)="swap()" > <img class="convertIco" src="../../assets/swap.svg"/> </button>
-                <div class="div-select">
-                    <label for="to">To </label>
-                    <select class="select" formControlName="to" id="to" >
-                        <option *ngFor="let item of currencies" value="{{item.symbol}}" [selected]="item.symbol==='USD'">{{item?.symbol}} - {{item?.name}}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <span *ngIf="errorTxt" style="color: red;">{{errorTxt}} </span>
-            <button class="btn convert" type="submit" (click)="convertCurrency()" [disabled]="!currencyForm.valid || errorTxt">Convert</button>
-            <div *ngIf="currentValue" class="flex">
-                <div class="conversionBox">
-                 <span>   Converted Value <br /> <strong>    {{currentValue | currency:currencyForm.value.to}}</strong> </span> </div>
-                <button class="btn details" type="submit" routerLink="/details/{{currencyForm.value.from}}/{{currencyForm.value.to}}/{{currencyForm.value.amount}}">More Details</button>
-            </div>
-        </div>
-    </div>
-    <ng-container *ngIf="home" >
-    <div *ngIf="currentValue" class="currencyGrid">
+    <div *ngIf="latestRates" class="currencyGrid">
         <div class="currencyBox" *ngFor="let rate of latestRates">
-         <span routerLink="/details/{{currencyForm.value.from}}/{{rate.symbol}}/{{currencyForm.value.amount}}" >   {{(currencyForm.value.amount * rate.rate)  | currency:rate.symbol}}   </span>
+            <span class="currencyConverted"
+                routerLink="/details/{{conversionData.from}}/{{rate.symbol}}/{{conversionData.amount}}">
+                {{(conversionData.amount * rate.rate) | currency:rate.symbol}} </span>
         </div>
     </div>
-    </ng-container>
 </div>

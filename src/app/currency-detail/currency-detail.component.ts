@@ -4,6 +4,8 @@ import { ApiService } from '../shared/services/api.service';
 
 import { ChartConfiguration, ChartOptions, ChartType } from "chart.js";
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConversionResponse, Currency, CurrencyResponse, FormValues } from '../currency-converter-home/currency-converter-home.component';
+const _ = require('lodash');
 @Component({
   selector: 'app-currency-detail',
   templateUrl: './currency-detail.component.html',
@@ -13,67 +15,72 @@ export class CurrencyDetailComponent implements OnInit {
   currencyForm!: FormGroup;
   currentValue: string = "";
   conversionRate = "";
-  currencies: any[] = [];
-  latestRates: any[] = [];
-  historicalData: any = {};
+  // currencies: Currency[] = [];
+
+  currencies: Currency[] = [{ name: 'United States Dollar', symbol: 'USD' }, { name: 'Great Britain Pound', symbol: 'GBP' }, { name: 'Euro', symbol: 'EUR' }];
+
+  historicalData: any = {
+    "base": "EUR",
+    "end_date": "2012-05-03",
+    "rates": {
+      "2012-05-01": {
+        "AUD": 1.278047,
+        "CAD": 1.302303,
+        "USD": 1.322891
+      },
+      "2012-05-02": {
+        "AUD": 1.274202,
+        "CAD": 1.299083,
+        "USD": 1.315066
+      },
+      "2012-05-03": {
+        "AUD": 1.280135,
+        "CAD": 1.296868,
+        "USD": 1.314491
+      }
+    },
+    "start_date": "2012-05-01",
+    "success": true,
+    "timeseries": true
+  };
   public lineChartData!: ChartConfiguration<'line'>['data'];
   public lineChartOptions: ChartOptions<'line'> = {
     responsive: false
   };
   public lineChartLegend = true;
   chart: boolean = false;
-  to="";
-  from="";
-  amount="";
-errorTxt='';
-  constructor(private router:Router,private route:ActivatedRoute,  private apiService: ApiService) { }
+  to: string = "";
+  from: string = "";
+  amount: number = 0;
+  errorTxt = '';
+  constructor(private router: Router, private route: ActivatedRoute, private apiService: ApiService) { }
 
   ngOnInit(): void {
-
-    this.currencyForm = new FormGroup({
-      amount: new FormControl(1, [Validators.required,Validators.pattern(/^-?(0|[1-9]\d*)?$/)]),
-      from: new FormControl('EUR', [Validators.required]),
-      to: new FormControl('USD', [Validators.required]),
-    });
-
-    this.currencyForm.valueChanges
-      .subscribe((params:any) => {
-        console.log(params);
-        this.currentValue ='';
-        this.errorTxt = '';
-        if(params.to===params.from){
-          this.errorTxt = "From and To currency should not be same";
-        }
-      });
-    
-    this.route.params.subscribe(params => {
-      console.log(params);
+    this.route.params.subscribe((params: any) => {
       this.to = params['to'];
       this.from = params['from'];
       this.amount = params['amount'];
-      this.currencyForm.patchValue({to:this.to, from:this.from, amount: this.amount});
-      
-  });
+      this.currencyForm.patchValue({ to: this.to, from: this.from, amount: this.amount });
+    });
     this.convertCurrency();
-    this.fetchHistoricData();
+
+    // this.fetchHistoricData();
   }
   convertCurrency() {
     if (!this.currencyForm.valid) {
       return;
     }
-       
-    this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: any) => {
+    this.fetchHistoricData(); this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: ConversionResponse) => {
       this.currentValue = "" + res.result;
       this.conversionRate = "" + res.info.rate;
-      this.fetchLatestConversionRates();
+      this.fetchHistoricData();
     });
   }
 
   fetchCurrencyList() {
     let symbols: string[] = [];
     let names: string[] = [];
-    this.apiService.getCurrencyList().subscribe((res: any) => {
-      this.fetchLatestConversionRates();
+    this.apiService.getCurrencyList().subscribe((res: CurrencyResponse) => {
       names = Object.values(res.symbols);
       symbols = Object.keys(res.symbols);
       this.currencies = [];
@@ -81,49 +88,46 @@ errorTxt='';
       for (let i = 0; i < names.length; i++) {
         this.currencies.push({ name: names[i], symbol: symbols[i] });
       }
-      this.currencyForm.patchValue({to:this.to, from:this.from, amount: this.amount});
-    });
-  }
-  fetchLatestConversionRates() {
-    this.apiService.getLatestConversionRate('USD,EUR,GBP,JPY,AUD,CAD,CHF,CNH,HKD,NZD,AED', this.currencyForm.value.from).subscribe((res: any) => {
-      console.log(res);
-      let symbols: string[] = [];
-      let rates: number[] = [];
-      symbols = Object.keys(res.rates);
-      rates = Object.values(res.rates);
-      for (let i = 0; i < symbols.length; i++) {
-        if ((this.currencyForm.value.to === symbols[i]) || (this.currencyForm.value.from === symbols[i])) {
-        } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
-      }
+      this.currencyForm.patchValue({ to: this.to, from: this.from, amount: this.amount });
     });
   }
 
   fetchHistoricData() {
-    this.apiService.getHistoricalData(this.currencyForm.value.from,this.currencyForm.value.to).subscribe((response:any)=>{
-      this.historicalData = response.rates;
-      let labels: string[] = [];
-      let values: number[] = [];
-      Object.values(response.rates).forEach((item:any) => {
-        let record:any = Object.values(item);
-        values.push(record[0]);
-        console.log(record[0]);
-      })
-  
-      this.lineChartData = {
-        labels: Object.keys(response.rates),
-        datasets: [
-          {
-            data: values,
-            label: 'Historical Rates Chart',
-            fill: true,
-            tension: 0.5,
-            borderColor: 'black',
-            backgroundColor: 'rgba(255,0,0,0.3)'
-          }
-        ]
-      };
-      this.chart = true;
-  
+    this.apiService.getHistoricalData(this.currencyForm.value.from, this.currencyForm.value.to).subscribe((response: HistoricalDataResponse) => {
+    this.historicalData = response.rates;
+    
+
+    let labels: string[] = [];
+    let values: number[] = [];
+    Object.values(response.rates).forEach((item: Object) => {
+      let record: number[] = Object.values(item);
+      values.push(record[0]);
+      console.log(record[0]);
+    })
+
+    this.lineChartData = {
+      labels: Object.keys(response.rates),
+      datasets: [
+        {
+          data: values,
+          label: 'Historical Rates Chart',
+          fill: true,
+          tension: 0.5,
+          borderColor: 'black',
+          backgroundColor: 'rgba(255,0,0,0.3)'
+        }
+      ]
+    };
+    this.chart = true;
     });
   }
+}
+
+export interface HistoricalDataResponse {
+  "base": string,
+  "end_date": string,
+  "rates": Object,
+  "start_date": string,
+  "success": boolean,
+  "timeseries": boolean
 }
