@@ -13,4 +13,4 @@ Currency Exchanger is an app the helps customers to hand different currency conv
 2. Homepage after conversion
 ![Alt text](/raw/homepage_after_conversion.png/?raw=true "Homepage after conversion")
 3. Details of currency with historic chart
-![Alt text](/raw/details.png.png/?raw=true "Details")
+![Alt text](/raw/details.png/?raw=true "Details")
