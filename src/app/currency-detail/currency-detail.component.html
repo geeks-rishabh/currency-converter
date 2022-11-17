@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <app-currency-converter [isHome]="false" (update)="fetchHistoricData()"></app-currency-converter>
+    <app-currency-converter [isHome]="false" [amount]="amount" [currencyFrom]="from" [currencyTo]="to" (update)="fetchHistoricData()"></app-currency-converter>
 
     <div>
         <div style="display: block;" *ngIf="chart">

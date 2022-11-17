@@ -12,37 +12,10 @@ const _ = require('lodash');
   styleUrls: ['./currency-detail.component.scss']
 })
 export class CurrencyDetailComponent implements OnInit {
-  currencyForm!: FormGroup;
-  currentValue: string = "";
-  conversionRate = "";
-  // currencies: Currency[] = [];
 
-  currencies: Currency[] = [{ name: 'United States Dollar', symbol: 'USD' }, { name: 'Great Britain Pound', symbol: 'GBP' }, { name: 'Euro', symbol: 'EUR' }];
+  currencies: Currency[] = [];
 
-  historicalData: any = {
-    "base": "EUR",
-    "end_date": "2012-05-03",
-    "rates": {
-      "2012-05-01": {
-        "AUD": 1.278047,
-        "CAD": 1.302303,
-        "USD": 1.322891
-      },
-      "2012-05-02": {
-        "AUD": 1.274202,
-        "CAD": 1.299083,
-        "USD": 1.315066
-      },
-      "2012-05-03": {
-        "AUD": 1.280135,
-        "CAD": 1.296868,
-        "USD": 1.314491
-      }
-    },
-    "start_date": "2012-05-01",
-    "success": true,
-    "timeseries": true
-  };
+  historicalData: any = [];
   public lineChartData!: ChartConfiguration<'line'>['data'];
   public lineChartOptions: ChartOptions<'line'> = {
     responsive: false
@@ -53,73 +26,115 @@ export class CurrencyDetailComponent implements OnInit {
   from: string = "";
   amount: number = 0;
   errorTxt = '';
-  constructor(private router: Router, private route: ActivatedRoute, private apiService: ApiService) { }
+
+  currentYear: number;
+  currentMonth: number;
+  currentDate: number;
+
+  lastYearDate: string;
+  currentYearDate: string;
+  monthDate: string[] = [];
+  constructor(private route: ActivatedRoute, private apiService: ApiService) {
+
+
+    this.currentYear = new Date().getFullYear();
+    this.currentMonth = new Date().getMonth() + 1;
+    this.currentDate = new Date().getDate();
+
+    this.lastYearDate = this.lastYearDateCall();
+    this.currentYearDate = this.currentYear + '-' + this.currentMonth + '-' + this.currentDate;
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params: any) => {
       this.to = params['to'];
       this.from = params['from'];
       this.amount = params['amount'];
-      this.currencyForm.patchValue({ to: this.to, from: this.from, amount: this.amount });
-    });
-    this.convertCurrency();
-
-    // this.fetchHistoricData();
-  }
-  convertCurrency() {
-    if (!this.currencyForm.valid) {
-      return;
-    }
-    this.fetchHistoricData(); this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: ConversionResponse) => {
-      this.currentValue = "" + res.result;
-      this.conversionRate = "" + res.info.rate;
       this.fetchHistoricData();
+      this.monthDate = this.lastDayOfMonth(this.currentMonth-1, this.currentYear);
     });
   }
 
-  fetchCurrencyList() {
-    let symbols: string[] = [];
-    let names: string[] = [];
-    this.apiService.getCurrencyList().subscribe((res: CurrencyResponse) => {
-      names = Object.values(res.symbols);
-      symbols = Object.keys(res.symbols);
-      this.currencies = [];
-
-      for (let i = 0; i < names.length; i++) {
-        this.currencies.push({ name: names[i], symbol: symbols[i] });
+  lastDayOfMonth(month: any, year: number): string[] {
+    let monthCounter = month;
+    let yearCounter = year;
+    let i = 0
+    let x = []
+    while (i < 12) {
+      if (monthCounter == 0) {
+        monthCounter = 12;
+        yearCounter = yearCounter - 1;
       }
-      this.currencyForm.patchValue({ to: this.to, from: this.from, amount: this.amount });
-    });
+
+      if (JSON.stringify(monthCounter).length == 1) {
+        monthCounter = ("0" + JSON.stringify(monthCounter)).slice(-2);
+        x.push(yearCounter + "-" + monthCounter + "-" + this.lastDay(yearCounter, monthCounter))
+      } else {
+        x.push(yearCounter + "-" + monthCounter + "-" + this.lastDay(yearCounter, monthCounter))
+      }
+
+      monthCounter--;
+      i++;
+    }
+
+    return x;
   }
+
+
+  lastDay(y: number, m: number): any {
+    return new Date(y, m, 0).getDate();
+  }
+
+  lastYearDateCall(): any {
+    let d = new Date();
+    let pastYear = d.getFullYear() - 1;
+    d.setFullYear(pastYear);
+    // console.log(d.toISOString().slice(0, 10));
+    return d.toISOString().slice(0, 10);
+  }
+
 
   fetchHistoricData() {
-    this.apiService.getHistoricalData(this.currencyForm.value.from, this.currencyForm.value.to).subscribe((response: HistoricalDataResponse) => {
-    this.historicalData = response.rates;
-    
-
-    let labels: string[] = [];
-    let values: number[] = [];
-    Object.values(response.rates).forEach((item: Object) => {
-      let record: number[] = Object.values(item);
-      values.push(record[0]);
-      console.log(record[0]);
-    })
-
-    this.lineChartData = {
-      labels: Object.keys(response.rates),
-      datasets: [
-        {
-          data: values,
-          label: 'Historical Rates Chart',
-          fill: true,
-          tension: 0.5,
-          borderColor: 'black',
-          backgroundColor: 'rgba(255,0,0,0.3)'
+    this.apiService.getHistoricalData(this.from, this.to,this.lastYearDate, this.currentYearDate).subscribe((response: HistoricalDataResponse) => {
+      console.log();
+      this.historicalData = response.rates;
+      let values: number[] = [];
+      this.monthDate.forEach((month: string) => {
+        console.log(this.historicalData[month]);
+        if(this.historicalData[month]){
+          values.push(this.historicalData[month][this.to]);
         }
-      ]
-    };
-    this.chart = true;
+      });
+
+
+
+
+      // Object.values(response.rates).forEach((item: Object) => {
+      //   let record: number[] = Object.values(item);
+      //   values.push(record[0]);
+
+      // })
+
+      this.lineChartData = {
+        labels: this.monthDate.reverse().map((month)=>this.getMonthName(month)),//Object.keys(response.rates),
+        datasets: [
+          {
+            data: values.reverse(),
+            label: 'Historical Rates Chart',
+            fill: true,
+            tension: 0.5,
+            borderColor: 'black',
+            backgroundColor: 'rgba(255,0,0,0.3)'
+          }
+        ]
+      };
+      this.chart = true;
     });
+  }
+  getMonthName(passed:string){
+    let date = new Date(passed);  // 2009-11-10
+    let monthY = date.toLocaleString('default', { month: 'long' }) + ', ' + date.getFullYear();
+    return monthY;
   }
 }
 
