@@ -14,7 +14,7 @@ export class CurrencyConverterComponent implements OnInit {
   currentValue: string = "";
   conversionRate = "";
 
-  currencies: Currency[] = [{ name: 'United States Dollar', symbol: 'USD' }, { name: 'Great Britain Pound', symbol: 'GBP' }, { name: 'Euro', symbol: 'EUR' }];
+  currencies: Currency[] = [];
   latestRates: Rates[] = [];
   errorTxt: string = '';
 
@@ -23,12 +23,13 @@ export class CurrencyConverterComponent implements OnInit {
   @Input() currencyFrom: string = '';
   @Input() currencyTo: string = '';
   @Output() update = new EventEmitter();
+  @Output() currencyObj = new EventEmitter();
   constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
     this.currencyForm = new FormGroup({
       amount: new FormControl(this.amount, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]),
-      from: new FormControl(this.currencyFrom, [Validators.required]),
+      from: new FormControl({ value: this.currencyFrom, disabled: !this.isHome }, [Validators.required]),
       to: new FormControl(this.currencyTo, [Validators.required]),
     });
 
@@ -48,14 +49,14 @@ export class CurrencyConverterComponent implements OnInit {
       return;
     }
 
-    if (this.currencyForm.value.to === this.currencyForm.value.from) {
+    if (this.currencyTo === this.currencyFrom) {
       return;
     }
 
-    this.apiService.getExchangeRates(this.currencyForm.value).subscribe((res: ConversionResponse) => {
+    this.apiService.getExchangeRates(this.currencyForm.getRawValue()).subscribe((res: ConversionResponse) => {
       this.currentValue = "" + res.result;
       this.conversionRate = "" + res.info.rate;
-      this.isHome ? this.update.emit(this.currencyForm.value) : this.update.emit('chart');
+      this.isHome ? this.update.emit(this.currencyForm.getRawValue()) : this.update.emit('chart');
 
     });
   }
@@ -72,11 +73,13 @@ export class CurrencyConverterComponent implements OnInit {
       for (let i = 0; i < names.length; i++) {
         this.currencies.push({ name: names[i], symbol: symbols[i] });
       }
-      this.currencyForm.patchValue({ to: 'EUR', from: 'USD' });
+      this.currencyForm.patchValue({ to: this.currencyTo, from: this.currencyFrom });
+
+      this.currencyObj.emit(this.currencies.find((el: Currency) => { return el.symbol === this.currencyFrom }));
     });
   }
 
-  swap() {
+  swap(): void {
     this.currencyForm.patchValue({ from: this.currencyForm.value.to, to: this.currencyForm.value.from });
   }
 

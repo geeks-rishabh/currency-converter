@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { pairwise, withLatestFrom } from 'rxjs';
 import { ApiService } from '../shared/services/api.service';
-const CURRENCY_LIST = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNH", "HKD", "NZD", "AED"];
+const POPULAR_CURRENCY_LIST = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "INR", "HKD", "NZD", "AED"];
 @Component({
   selector: 'app-currency-converter-home',
   templateUrl: './currency-converter-home.component.html',
@@ -13,8 +13,6 @@ export class CurrencyConverterHomeComponent {
   currentValue: string = "";
   conversionRate = "";
   currencies: Currency[] = [];
-
-  // currencies: Currency[] = [{ name: 'United States Dollar', symbol: 'USD' }, { name: 'Great Britain Pound', symbol: 'GBP' }, { name: 'Euro', symbol: 'EUR' }];
   latestRates: Rates[] = [];
   errorTxt: string = '';
 
@@ -23,19 +21,17 @@ export class CurrencyConverterHomeComponent {
   constructor(private apiService: ApiService) { }
 
   fetchLatestConversionRates(params: ParamsInput) {
-
+    
     this.conversionData = params;
-    this.apiService.getLatestConversionRate("USD,EUR,GBP,JPY,AUD,CAD,CHF,CNH,HKD,NZD,AED", params.from).subscribe((res: LatestConversionRatesResponse) => {
-      console.log(res);
+    this.apiService.getLatestConversionRate(POPULAR_CURRENCY_LIST.filter(c=>c!=params.from && c!=params.to).join(','), params.from).subscribe((res: LatestConversionRatesResponse) => {
       let symbols: string[] = [];
       let rates: number[] = [];
       symbols = Object.keys(res.rates);
       rates = Object.values(res.rates);
       for (let i = 0; i < symbols.length; i++) {
         if ((params.to === symbols[i]) || (params.from === symbols[i])) {
-        } else { this.latestRates.push({ rate: rates[i], symbol: symbols[i] }); }
+        } else {  this.latestRates.push({ rate: rates[i], symbol: symbols[i] });  }
       }
-      this.latestRates.length = 9;
     });
   }
 

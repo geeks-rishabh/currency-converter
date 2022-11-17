@@ -16,8 +16,8 @@ export class CurrencyDetailComponent implements OnInit {
   currencies: Currency[] = [];
 
   historicalData: any = [];
-  public lineChartData!: ChartConfiguration<'line'>['data'];
-  public lineChartOptions: ChartOptions<'line'> = {
+  public lineChartData!: ChartConfiguration<'bar'>['data'];
+  public lineChartOptions: ChartOptions<'bar'> = {
     responsive: false
   };
   public lineChartLegend = true;
@@ -34,8 +34,8 @@ export class CurrencyDetailComponent implements OnInit {
   lastYearDate: string;
   currentYearDate: string;
   monthDate: string[] = [];
+  currencyObj!: Currency;
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
-
 
     this.currentYear = new Date().getFullYear();
     this.currentMonth = new Date().getMonth() + 1;
@@ -51,8 +51,12 @@ export class CurrencyDetailComponent implements OnInit {
       this.from = params['from'];
       this.amount = params['amount'];
       this.fetchHistoricData();
-      this.monthDate = this.lastDayOfMonth(this.currentMonth-1, this.currentYear);
+      this.monthDate = this.lastDayOfMonth(this.currentMonth - 1, this.currentYear);
     });
+  }
+
+  updateCurrency(value: Currency) {
+    this.currencyObj = value;
   }
 
   lastDayOfMonth(month: any, year: number): string[] {
@@ -89,31 +93,19 @@ export class CurrencyDetailComponent implements OnInit {
     let d = new Date();
     let pastYear = d.getFullYear() - 1;
     d.setFullYear(pastYear);
-    // console.log(d.toISOString().slice(0, 10));
     return d.toISOString().slice(0, 10);
   }
 
 
   fetchHistoricData() {
-    this.apiService.getHistoricalData(this.from, this.to,this.lastYearDate, this.currentYearDate).subscribe((response: HistoricalDataResponse) => {
-      console.log();
+  /*  this.apiService.getHistoricalData(this.from, this.to,this.lastYearDate, this.currentYearDate).subscribe((response: HistoricalDataResponse) => {
       this.historicalData = response.rates;
       let values: number[] = [];
       this.monthDate.forEach((month: string) => {
-        console.log(this.historicalData[month]);
         if(this.historicalData[month]){
           values.push(this.historicalData[month][this.to]);
         }
       });
-
-
-
-
-      // Object.values(response.rates).forEach((item: Object) => {
-      //   let record: number[] = Object.values(item);
-      //   values.push(record[0]);
-
-      // })
 
       this.lineChartData = {
         labels: this.monthDate.reverse().map((month)=>this.getMonthName(month)),//Object.keys(response.rates),
@@ -121,8 +113,8 @@ export class CurrencyDetailComponent implements OnInit {
           {
             data: values.reverse(),
             label: 'Historical Rates Chart',
-            fill: true,
-            tension: 0.5,
+            // fill: true,
+            // tension: 0.5,
             borderColor: 'black',
             backgroundColor: 'rgba(255,0,0,0.3)'
           }
@@ -130,8 +122,8 @@ export class CurrencyDetailComponent implements OnInit {
       };
       this.chart = true;
     });
-  }
-  getMonthName(passed:string){
+  */}
+  getMonthName(passed: string) {
     let date = new Date(passed);  // 2009-11-10
     let monthY = date.toLocaleString('default', { month: 'long' }) + ', ' + date.getFullYear();
     return monthY;
