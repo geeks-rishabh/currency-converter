@@ -1,6 +1,6 @@
 <div class="main-content">
     <div class="content">
-        <h2><strong><strong>{{currencyObj.symbol}}</strong> - {{currencyObj.name}}  </strong></h2>
+        <h2 *ngIf="currencyObj"><strong><strong>{{currencyObj.symbol}}</strong> - {{currencyObj.name}}  </strong></h2>
         <div>
             <button class="nav-btn" routerLink="/"> Back to Home </button>
         </div>

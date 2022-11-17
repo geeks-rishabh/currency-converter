@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ApiService } from '../shared/services/api.service';
 
 import { ChartConfiguration, ChartOptions, ChartType } from "chart.js";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ConversionResponse, Currency, CurrencyResponse, FormValues } from '../currency-converter-home/currency-converter-home.component';
 const _ = require('lodash');
 @Component({
@@ -46,7 +46,7 @@ export class CurrencyDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: any) => {
+    this.route.params.subscribe((params: Params) => {
       this.to = params['to'];
       this.from = params['from'];
       this.amount = params['amount'];
@@ -59,11 +59,12 @@ export class CurrencyDetailComponent implements OnInit {
     this.currencyObj = value;
   }
 
-  lastDayOfMonth(month: any, year: number): string[] {
+  lastDayOfMonth(month: number, year: number): string[] {
     let monthCounter = month;
     let yearCounter = year;
-    let i = 0
-    let x = []
+    let i = 0;
+    let x = [];
+    let formattedMonth:string;
     while (i < 12) {
       if (monthCounter == 0) {
         monthCounter = 12;
@@ -71,8 +72,8 @@ export class CurrencyDetailComponent implements OnInit {
       }
 
       if (JSON.stringify(monthCounter).length == 1) {
-        monthCounter = ("0" + JSON.stringify(monthCounter)).slice(-2);
-        x.push(yearCounter + "-" + monthCounter + "-" + this.lastDay(yearCounter, monthCounter))
+        formattedMonth = ("0" + JSON.stringify(monthCounter)).slice(-2);
+        x.push(yearCounter + "-" + formattedMonth + "-" + this.lastDay(yearCounter, monthCounter))
       } else {
         x.push(yearCounter + "-" + monthCounter + "-" + this.lastDay(yearCounter, monthCounter))
       }
@@ -85,11 +86,11 @@ export class CurrencyDetailComponent implements OnInit {
   }
 
 
-  lastDay(y: number, m: number): any {
+  lastDay(y: number, m: number): number {
     return new Date(y, m, 0).getDate();
   }
 
-  lastYearDateCall(): any {
+  lastYearDateCall(): string {
     let d = new Date();
     let pastYear = d.getFullYear() - 1;
     d.setFullYear(pastYear);
@@ -98,7 +99,7 @@ export class CurrencyDetailComponent implements OnInit {
 
 
   fetchHistoricData() {
-  /*  this.apiService.getHistoricalData(this.from, this.to,this.lastYearDate, this.currentYearDate).subscribe((response: HistoricalDataResponse) => {
+    this.apiService.getHistoricalData(this.from, this.to,this.lastYearDate, this.currentYearDate).subscribe((response: HistoricalDataResponse) => {
       this.historicalData = response.rates;
       let values: number[] = [];
       this.monthDate.forEach((month: string) => {
@@ -113,8 +114,6 @@ export class CurrencyDetailComponent implements OnInit {
           {
             data: values.reverse(),
             label: 'Historical Rates Chart',
-            // fill: true,
-            // tension: 0.5,
             borderColor: 'black',
             backgroundColor: 'rgba(255,0,0,0.3)'
           }
@@ -122,7 +121,7 @@ export class CurrencyDetailComponent implements OnInit {
       };
       this.chart = true;
     });
-  */}
+  }
   getMonthName(passed: string) {
     let date = new Date(passed);  // 2009-11-10
     let monthY = date.toLocaleString('default', { month: 'long' }) + ', ' + date.getFullYear();

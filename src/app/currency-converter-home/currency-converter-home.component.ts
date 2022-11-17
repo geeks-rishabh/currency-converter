@@ -17,7 +17,7 @@ export class CurrencyConverterHomeComponent {
   errorTxt: string = '';
 
   @Input() home: boolean = true;
-  conversionData: any;
+  conversionData!: ParamsInput;
   constructor(private apiService: ApiService) { }
 
   fetchLatestConversionRates(params: ParamsInput) {
@@ -26,6 +26,7 @@ export class CurrencyConverterHomeComponent {
     this.apiService.getLatestConversionRate(POPULAR_CURRENCY_LIST.filter(c=>c!=params.from && c!=params.to).join(','), params.from).subscribe((res: LatestConversionRatesResponse) => {
       let symbols: string[] = [];
       let rates: number[] = [];
+      this.latestRates = [];
       symbols = Object.keys(res.rates);
       rates = Object.values(res.rates);
       for (let i = 0; i < symbols.length; i++) {
