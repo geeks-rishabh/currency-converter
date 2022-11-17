@@ -12,12 +12,16 @@ import { HeaderComponent } from './header/header.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { CurrencyConverterComponent } from './currency-converter/currency-converter.component';
+import { TestComponent } from './test/test.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     CurrencyDetailComponent,
     CurrencyConverterHomeComponent,
-    HeaderComponent
+    HeaderComponent,
+    CurrencyConverterComponent
   ],
   imports: [
     BrowserModule,
