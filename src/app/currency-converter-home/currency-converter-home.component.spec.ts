@@ -7,7 +7,7 @@ import { cO } from 'chart.js/dist/chunks/helpers.core';
 import { of } from 'rxjs';
 import { ApiService } from '../shared/services/api.service';
 
-import { CurrencyConverterHomeComponent } from './currency-converter-home.component';
+import { CurrencyConverterHomeComponent, ParamsInput } from './currency-converter-home.component';
 class FakeApiService {
   // Implement the methods you want to overload here
   getCurrencyList() {
@@ -45,6 +45,10 @@ class FakeApiService {
       "success": true
     })
   }
+
+  getLatestConversionRate(){
+    of({});
+  }
 }
 describe('CurrencyConverterHomeComponent', () => {
   let component: CurrencyConverterHomeComponent;
@@ -74,24 +78,4 @@ describe('CurrencyConverterHomeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetchCurrencyList',()=>{
-    const service = TestBed.get(ApiService);
-  const spyOnMethod = spyOn(service, 'getCurrencyList').and.callThrough();
-  // act
-  component.fetchCurrencyList();
-  // assert
-  expect(spyOnMethod).toHaveBeenCalled();
-// expect(component.fetchCurrencyList).toHaveBeenCalled();
-  });
-
-
-  it('should convertCurrency',()=>{
-    const service = TestBed.get(ApiService);
-  const spyOnMethod = spyOn(service, 'getExchangeRates').and.callThrough();
-  // act
-  component.convertCurrency();
-  // assert
-  expect(spyOnMethod).toHaveBeenCalled();
-// expect(component.fetchCurrencyList).toHaveBeenCalled();
-  });
 });

@@ -6,6 +6,7 @@ Currency Exchanger is an app the helps customers to hand different currency conv
 - modify environment.ts file to update fixer api key
 - run `npm start`
 - open `localhost:4200`
+- run `npm test`
 
 # screenshots
 1. Homepage before conversion 

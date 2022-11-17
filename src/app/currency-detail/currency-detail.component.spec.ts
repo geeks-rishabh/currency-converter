@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Currency } from '../currency-converter-home/currency-converter-home.component';
 import { ApiService } from '../shared/services/api.service';
 
 import { CurrencyDetailComponent } from './currency-detail.component';
@@ -28,4 +29,13 @@ describe('CurrencyDetailComponent', () => {
     expect(component).toBeTruthy();
   });
 
+
+  it('should call updateCurrency',()=>{
+    let params:  Currency = {name:'', symbol:''};
+component.updateCurrency(params);
+  });
+
+  it('should call getMonthName',()=>{
+component.getMonthName("2022-11-01");
+  });
 });

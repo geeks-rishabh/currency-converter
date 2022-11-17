@@ -27,7 +27,7 @@ export class ApiService {
         return this.httpClient.get(`${environment.apiURL}latest?symbols=${queryParams}&base=${base}`, this.headers).pipe(catchError(this.handleError));
     }
 
-    private handleError(error: HttpErrorResponse) {
+    handleError(error: HttpErrorResponse) {
         if (error.status === 0) {
             // A client-side or network error occurred. Handle it accordingly.
             console.error('An error occurred:', error.error);
